@@ -167,14 +167,17 @@ class Squiss extends EventEmitter {
    * Queues the given message for deletion. The message will actually be deleted from SQS per the settings
    * supplied to the constructor.
    * @param {Message|string} msg The message object to be deleted, or the receipt handle of a message to be deleted
+   * @param {object} options: Set options.alreadyHandled true to not decrement num inFlight again
    */
-  deleteMessage(msg) {
+  deleteMessage(msg, options) {
     if (msg instanceof Message) {
       this._delQueue.push({ Id: msg.raw.MessageId, ReceiptHandle: msg.raw.ReceiptHandle })
     } else {
       this._delQueue.push({ Id: msg, ReceiptHandle: msg })
     }
-    this.handledMessage()
+    if (options && !options.alreadyHandled) {
+        this.handledMessage()
+    }
     if (this._delQueue.length >= this._opts.deleteBatchSize) {
       if (this._delTimer) {
         clearTimeout(this._delTimer)

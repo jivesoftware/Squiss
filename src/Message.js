@@ -39,10 +39,11 @@ class Message {
 
   /**
    * Queues this message for deletion.
+   * @param {object} options: Set options.alreadyHandled true to not decrement num inFlight again
    */
-  del() {
+  del(options) {
     if (!this._handled) {
-      this._squiss.deleteMessage(this)
+      this._squiss.deleteMessage(this, options)
       this._handled = true
     }
   }
