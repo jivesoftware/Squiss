@@ -8,6 +8,7 @@ const AWS = require('aws-sdk')
 const EventEmitter = require('events').EventEmitter
 const Message = require('./Message')
 const url = require('url')
+const uuid = require('uuid');
 
 /**
  * The maximum number of messages that can be sent in an SQS sendMessageBatch request.
@@ -173,7 +174,7 @@ class Squiss extends EventEmitter {
     if (msg instanceof Message) {
       this._delQueue.push({ Id: msg.raw.MessageId, ReceiptHandle: msg.raw.ReceiptHandle })
     } else {
-      this._delQueue.push({ Id: msg, ReceiptHandle: msg })
+      this._delQueue.push({ Id: uuid.v4(), ReceiptHandle: msg })
     }
     if (options && !options.alreadyHandled) {
         this.handledMessage()
